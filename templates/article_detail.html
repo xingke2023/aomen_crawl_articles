@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ article.title }} - 澳门文章爬虫系统</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>澳门文章爬虫系统</h1>
+            <p class="subtitle">文章详情</p>
+        </header>
+
+        <div class="back-nav">
+            <a href="/" class="back-link">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="19" y1="12" x2="5" y2="12"></line>
+                    <polyline points="12 19 5 12 12 5"></polyline>
+                </svg>
+                返回列表
+            </a>
+        </div>
+
+        {% if article %}
+        <article class="article-detail-card">
+            <div class="article-detail-header">
+                <div class="article-badge">#{{ article.id }}</div>
+                <h1 class="article-detail-title">{{ article.title }}</h1>
+
+                <div class="article-detail-meta">
+                    <span class="meta-item">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                            <path d="M8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0zM1.5 8a6.5 6.5 0 1 0 13 0 6.5 6.5 0 0 0-13 0z"/>
+                            <path d="M8 3.5a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-.5.5H5.5a.5.5 0 0 1 0-1H7.5V4a.5.5 0 0 1 .5-.5z"/>
+                        </svg>
+                        发布时间: {% if article.publish_time %}{{ article.publish_time.strftime('%Y-%m-%d %H:%M:%S') }}{% else %}未知{% endif %}
+                    </span>
+                    <span class="meta-item">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                            <path d="M8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0zM1.5 8a6.5 6.5 0 1 0 13 0 6.5 6.5 0 0 0-13 0z"/>
+                            <path d="M8 3.5a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-.5.5H5.5a.5.5 0 0 1 0-1H7.5V4a.5.5 0 0 1 .5-.5z"/>
+                        </svg>
+                        创建时间: {{ article.created_at.strftime('%Y-%m-%d %H:%M:%S') }}
+                    </span>
+                </div>
+            </div>
+
+            <div class="article-detail-content">
+                {% if article.content %}
+                    {{ article.content|safe }}
+                {% else %}
+                    <p class="no-content">该文章暂无内容</p>
+                {% endif %}
+            </div>
+
+            <div class="article-detail-footer">
+                <a href="{{ article.link }}" target="_blank" class="source-link">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                        <polyline points="15 3 21 3 21 9"></polyline>
+                        <line x1="10" y1="14" x2="21" y2="3"></line>
+                    </svg>
+                    查看原文
+                </a>
+            </div>
+        </article>
+        {% else %}
+        <div class="empty-state">
+            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="8" x2="12" y2="12"></line>
+                <line x1="12" y1="16" x2="12.01" y2="16"></line>
+            </svg>
+            <h3>文章不存在</h3>
+            <p>找不到该文章</p>
+            <a href="/" class="back-home-btn">返回首页</a>
+        </div>
+        {% endif %}
+
+        <footer>
+            <p>澳门文章爬虫系统 &copy; 2026</p>
+        </footer>
+    </div>
+</body>
+</html>

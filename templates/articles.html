@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>文章列表 - 澳门文章爬虫系统</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>澳门文章爬虫系统</h1>
+            <p class="subtitle">文章列表</p>
+        </header>
+
+        <!-- 搜索框 -->
+        <div class="search-container">
+            <form action="/" method="get" class="search-form">
+                <input type="text"
+                       name="search"
+                       class="search-input"
+                       placeholder="搜索文章标题或内容..."
+                       value="{{ search_query if search_query else '' }}">
+                <button type="submit" class="search-btn">搜索</button>
+                {% if search_query %}
+                <a href="/" class="clear-btn">清除</a>
+                {% endif %}
+            </form>
+            {% if search_query %}
+            <div class="search-info">
+                搜索关键词: <strong>{{ search_query }}</strong>
+                {% if pagination %}
+                - 找到 <strong>{{ pagination.total }}</strong> 篇文章
+                {% endif %}
+            </div>
+            {% endif %}
+        </div>
+
+        {% if pagination %}
+        <div class="stats">
+            <div class="stat-item">
+                <span class="stat-number">{{ pagination.total }}</span>
+                <span class="stat-label">篇文章</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number">{{ pagination.pages }}</span>
+                <span class="stat-label">页</span>
+            </div>
+        </div>
+        {% endif %}
+
+        <div class="articles-list">
+            {% if articles %}
+                {% for article in articles %}
+                <div class="article-card compact">
+                    <div class="article-row">
+                        <span class="article-id">#{{ article.id }}</span>
+                        <h3 class="article-title">
+                            <a href="/article/{{ article.id }}">{{ article.title }}</a>
+                        </h3>
+                        <div class="article-meta-compact">
+                            {% if article.content %}
+                                <span class="content-badge has-content">有内容</span>
+                            {% else %}
+                                <span class="content-badge no-content">无内容</span>
+                            {% endif %}
+                            <span class="meta-time">
+                                {% if article.publish_time %}{{ article.publish_time.strftime('%Y-%m-%d') }}{% else %}{{ article.created_at.strftime('%Y-%m-%d') }}{% endif %}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+
+                <!-- 分页导航 -->
+                {% if pagination and pagination.pages > 1 %}
+                <div class="pagination">
+                    {% set search_param = '&search=' + search_query if search_query else '' %}
+                    {% if pagination.has_prev %}
+                        <a href="?page=1{{ search_param }}" class="page-btn">首页</a>
+                        <a href="?page={{ pagination.prev_num }}{{ search_param }}" class="page-btn">上一页</a>
+                    {% else %}
+                        <span class="page-btn disabled">首页</span>
+                        <span class="page-btn disabled">上一页</span>
+                    {% endif %}
+
+                    <div class="page-numbers">
+                        {% for page_num in range(1, pagination.pages + 1) %}
+                            {% if page_num == pagination.page %}
+                                <span class="page-num active">{{ page_num }}</span>
+                            {% elif page_num >= pagination.page - 2 and page_num <= pagination.page + 2 %}
+                                <a href="?page={{ page_num }}{{ search_param }}" class="page-num">{{ page_num }}</a>
+                            {% elif page_num == 1 or page_num == pagination.pages %}
+                                <a href="?page={{ page_num }}{{ search_param }}" class="page-num">{{ page_num }}</a>
+                            {% elif page_num == pagination.page - 3 or page_num == pagination.page + 3 %}
+                                <span class="page-num">...</span>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+
+                    {% if pagination.has_next %}
+                        <a href="?page={{ pagination.next_num }}{{ search_param }}" class="page-btn">下一页</a>
+                        <a href="?page={{ pagination.pages }}{{ search_param }}" class="page-btn">末页</a>
+                    {% else %}
+                        <span class="page-btn disabled">下一页</span>
+                        <span class="page-btn disabled">末页</span>
+                    {% endif %}
+                </div>
+                {% endif %}
+            {% else %}
+                <div class="empty-state">
+                    <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                        <polyline points="14 2 14 8 20 8"></polyline>
+                        <line x1="12" y1="18" x2="12" y2="12"></line>
+                        <line x1="9" y1="15" x2="15" y2="15"></line>
+                    </svg>
+                    <h3>暂无文章</h3>
+                    <p>还没有爬取到任何文章</p>
+                </div>
+            {% endif %}
+        </div>
+
+        <footer>
+            <p>澳门文章爬虫系统 &copy; 2026</p>
+        </footer>
+    </div>
+</body>
+</html>
